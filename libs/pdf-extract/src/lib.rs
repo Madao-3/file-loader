@@ -1,7 +1,7 @@
 extern crate lopdf;
 
 use lopdf::content::Content;
-use lopdf::{Document, Dictionary, Stream, Object, StringFormat};
+use lopdf::*;
 use euclid::*;
 use std::fmt::Debug;
 extern crate encoding;
@@ -28,11 +28,6 @@ mod encodings;
 macro_rules! dlog {
     ($($e:expr),*) => { {$(let _ = $e;)*} }
     //($($t:tt)*) => { println!($($t)*) }
-}
-
-pub enum Result<T, E> {
-    Ok(T),
-    Err(E),
 }
 
 fn get_info(doc: &Document) -> Option<&Dictionary> {
@@ -1360,11 +1355,11 @@ impl<'a> Processor<'a> {
                 }
                 "CS" => {
                     let name = operation.operands[0].as_name().unwrap();
-                    gs.stroke_colorspace = make_colorspace(doc, name, resources);
+                    // gs.stroke_colorspace = make_colorspace(doc, name, resources);
                 }
                 "cs" => {
                     let name = operation.operands[0].as_name().unwrap();
-                    gs.fill_colorspace = make_colorspace(doc, name, resources);
+                    // gs.fill_colorspace = make_colorspace(doc, name, resources);
                 }
                 "SC" | "SCN" => {
                     gs.stroke_color = match gs.fill_colorspace {
@@ -1818,7 +1813,7 @@ pub struct WriteAdapter<W> {
 }
 
 impl<W: std::io::Write> std::fmt::Write for WriteAdapter<W> {
-    fn write_str(&mut self, s: &str) -> std::result::Result<(), std::fmt::Error> {
+    fn write_str(&mut self, s: &str) -> Result<(), std::fmt::Error> {
         self.f.write_all(s.as_bytes()).map_err(|_| fmt::Error)
     }
 }
@@ -1919,7 +1914,15 @@ pub fn print_metadata(doc: &Document) {
     dlog!("Type: {:?}", get_pages(&doc).get(b"Type").and_then(|x| x.as_name()).unwrap());
 }
 
-
+/// Extract the text from a pdf at `path` and return a `String` with the results
+pub fn extract_text(doc: &Document) -> Result<String, std::io::Error> {
+    let mut s = String::new();
+    {
+        let mut output = PlainTextOutput::new(&mut s);
+        output_doc(&doc, &mut output);
+    }
+    return Ok(s);
+}
 
 fn get_inherited<'a, T: FromObj<'a>>(doc: &'a Document, dict: &'a Dictionary, key: &[u8]) -> Option<T> {
     let o: Option<T> = get(doc, dict, key);

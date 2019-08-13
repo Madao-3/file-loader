@@ -4,6 +4,7 @@ window.change = function(event) {
   var reader = new FileReader();
   reader.onload = function(event) {
     let base64Str = event.target.result.split('data:application/pdf;base64,')[1]
+    console.log(base64Str);
     console.log(FileLoader.pdf_check(base64Str))
   };
 

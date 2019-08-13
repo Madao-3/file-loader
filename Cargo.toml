@@ -24,9 +24,8 @@ lto = true
 wasm-bindgen = "0.2.45"
 wee_alloc = { version = "0.4.2", optional = true }
 base64 = "0.10.1"
-tempfile = "3"
 lopdf = { path = "./libs/lopdf" }
-base64-stream = "1.0.4"
+pdf-extract = { path = "./libs/pdf-extract" }
 
 [dependencies.web-sys]
 version = "0.3.22"

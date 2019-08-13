@@ -1,8 +1,7 @@
 extern crate base64;
-extern crate tempfile;
 extern crate lopdf;
 
-mod PdfLoader;
+mod pdf_loader;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -23,4 +22,13 @@ pub fn pdf_check(base64_str: String) -> String {
   let mut buffer = Vec::<u8>::new();
   base64::decode_config_buf(&base64_str, base64::STANDARD, &mut buffer).unwrap();
   Collector::process_document(buffer.as_slice())
+}
+
+
+#[wasm_bindgen]
+pub fn doc_check(base64_str: String) -> String {
+  // let mut buffer = Vec::<u8>::new();
+  // base64::decode_config_buf(&base64_str, base64::STANDARD, &mut buffer).unwrap();
+  // Collector::process_document(buffer.as_slice())
+  String::new()
 }
